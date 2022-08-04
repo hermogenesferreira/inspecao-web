@@ -8,7 +8,7 @@ const Home = () => {
     <HomeLayout>
       <div className="w-full h-screen flex flex-col justify-between">
         <div className="grid md:grid-cols-2 max-w-[1240px] m-auto">
-          <div className="flex flex-col justify-center md:items-start px-2">
+          <div className="flex flex-col justify-center md:items-start px-8">
             <h1 className="py-2 text-3xl md:text-3xl font-bold">
               Facilite as <strong>Inspeções Sanitárias</strong>
             </h1>

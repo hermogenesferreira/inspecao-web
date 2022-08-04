@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import DashboardLayout from '../../components/DashboardLayout';
-import { Formik, Field, Form } from 'formik';
-import { useParams } from 'react-router-dom';
+import { Formik, Field, Form, ErrorMessage } from 'formik';
+import { Link, useParams, useNavigate } from 'react-router-dom';
+import * as Yup from 'yup';
+import { api } from '../../services/api';
+import { AuthContext } from '../../contexts/auth';
 
-import api from '../../services/api';
 const Inspecao = () => {
   const [open1, setOpen1] = useState(true);
   const [open2, setOpen2] = useState(false);
@@ -12,7 +14,20 @@ const Inspecao = () => {
   const [relatorio, setRelatorio] = useState([]);
   const [textArea, setTextArea] = useState('Insira aqui as observações.');
   const [estabelecimento, setEstabelecimento] = useState([]);
+  const navigate = useNavigate();
   let { roteiro } = useParams();
+  const { user } = useContext(AuthContext);
+
+  const renderError = (message) => <p className="help is-danger">{message}</p>;
+
+  const validationSchema = Yup.object({
+    respostas: Yup.string().required(),
+    email: Yup.string().email().required(),
+    title: Yup.string().required(),
+    review: Yup.string().required(),
+    rating: Yup.number().min(1).max(10).required(),
+    wouldRecommend: Yup.boolean().default(false),
+  });
 
   function handleSubmit(data) {
     var i = 0;
@@ -30,10 +45,12 @@ const Inspecao = () => {
         estabelecimentoId: dados[1],
         roteiroId: relatorio.id,
         respostas: respostas,
+        userId: user.id,
         obs: textArea,
       })
       .then((res) => {
         alert('Inspeção Realizada com Sucesso!');
+        navigate('/dashboard/insps');
       })
       .catch((err) => {
         alert('Erro interno!');
@@ -79,6 +96,7 @@ const Inspecao = () => {
               name={`respostas.${name}`}
               value={`Sim ${id}`}
             />
+            <ErrorMessage name={`respostas.${name}`} render={renderError} />
           </td>
           <td className="border text-center">
             <Field
@@ -140,7 +158,7 @@ const Inspecao = () => {
 
   return (
     <DashboardLayout>
-      <div className="flex flex-col pl-8 pt-20">
+      <div className="flex flex-col pl-80 pt-20">
         <h1 className="font-bold text-3xl pb-8">Realizar Inspeção</h1>
         <h2 className="font-bold text-2xl pb-8">Roteiro: {relatorio.name}</h2>
         <div className="flex flex-col text-white w-[90%]">
@@ -252,12 +270,14 @@ const Inspecao = () => {
                     >
                       Enviar
                     </button>
-                    <button
-                      className="bg-red-500 py-2 px-6 mx-4 my-4  border-red-500"
-                      onClick={() => alert('clicado')}
-                    >
-                      Cancelar
-                    </button>
+                    <Link to="/dashboard/insps">
+                      <button
+                        type="button"
+                        className="bg-red-500 py-2 px-6 mx-4 my-4  border-red-500"
+                      >
+                        Cancelar
+                      </button>
+                    </Link>
                   </div>
                 </Form>
               </Formik>

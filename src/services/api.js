@@ -1,7 +1,9 @@
 import axios from 'axios';
 
-const api = axios.create({
+export const api = axios.create({
   baseURL: process.env.REACT_APP_BASE_URL,
 });
 
-export default api;
+export const CreateSession = async (email, password) => {
+  return api.post('/sessions', { email, password });
+};

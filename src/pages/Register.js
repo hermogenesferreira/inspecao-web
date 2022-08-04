@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { LockClosedIcon } from '@heroicons/react/solid';
 
-import api from '../services/api';
+import { api } from '../services/api';
 import HomeLayout from '../components/HomeLayout';
 
 const Register = () => {
@@ -18,13 +18,13 @@ const Register = () => {
     e.preventDefault();
     api
       .post('users', {
-        nome: data.nome,
+        name: data.name,
         email: data.email,
-        senha: data.senha,
+        password: data.password,
       })
       .then((res) => {
         alert('Usuário Criado com Sucesso!');
-        navigate('/list');
+        navigate('/entrar');
       })
       .catch((err) => {
         alert('Erro interno!');

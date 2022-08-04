@@ -2,7 +2,7 @@ import { useParams } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import DashboardLayout from '../../components/DashboardLayout';
 
-import api from '../../services/api';
+import { api } from '../../services/api';
 
 const Insp = () => {
   const [insp, setInsp] = useState([]);
@@ -66,8 +66,8 @@ const Insp = () => {
 
   return (
     <DashboardLayout>
-      <div className="flex flex-col pl-8 pt-20">
-        <h1 className="font-bold text-2xl pb-8">Visualizar Inspeção:</h1>
+      <div className="flex flex-col pl-80 pt-20 pb-16">
+        <h1 className="font-bold text-3xl pb-8">Visualizar Inspeção:</h1>
         <div className="flex flex-col text-white w-[90%]">
           <div className="bg-blue-500 rounded">
             <div className='flex flex-col text-3xl font-bold p-1"'>
@@ -119,7 +119,14 @@ const Insp = () => {
                   </tr>
                   <tr className="border">
                     <td className="border">
-                      CPF do Responsável: {insp.estabelecimento?.cpfResponsavel}
+                      CPF Responsável da empresa:{' '}
+                      {insp.estabelecimento?.cpfResponsavel}
+                    </td>
+                  </tr>
+                  <tr className="border">
+                    <td className="border">
+                      Inspeção realizada por:
+                      {insp.user?.name}
                     </td>
                   </tr>
                 </tbody>

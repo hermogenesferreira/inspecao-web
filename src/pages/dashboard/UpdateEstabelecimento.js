@@ -1,14 +1,10 @@
-import { PencilIcon, PlusIcon } from '@heroicons/react/outline';
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import DashboardLayout from '../../components/DashboardLayout';
 import { api } from '../../services/api';
 
 const Estabelecimento = () => {
-  const [estabelecimentos, setEstabelecimentos] = useState([]);
-  const [hidden, setHidden] = useState(true);
   const [data, setData] = useState({
-    id: '',
     razaoSocial: '',
     nomeFantasia: '',
     cnpj: '',
@@ -27,19 +23,6 @@ const Estabelecimento = () => {
   });
   let navigate = useNavigate();
 
-  async function fetchData2() {
-    await api.get('/estabelecimento/').then((response) => {
-      setEstabelecimentos(response.data);
-    });
-  }
-
-  async function edit(e) {
-    setHidden(false);
-    await api.get(`/estabelecimento/${e}`).then((response) => {
-      setData(response.data);
-    });
-  }
-
   function handle(e) {
     const newData = { ...data };
     newData[e.target.id] = e.target.value;
@@ -47,11 +30,10 @@ const Estabelecimento = () => {
     console.log(newData);
   }
 
-  function update(e) {
+  function submit(e) {
     e.preventDefault();
-    console.log(data);
     api
-      .put(`/estabelecimento/${data.id}`, {
+      .post('estabelecimento', {
         razaoSocial: data.razaoSocial,
         nomeFantasia: data.nomeFantasia,
         cnpj: data.cnpj,
@@ -70,67 +52,26 @@ const Estabelecimento = () => {
       })
       .then((res) => {
         console.log(res.data);
-        alert('Empresa Atualizada com Sucesso!');
-        document.location.reload(true);
+        alert('Empresa Adicionada com Sucesso!');
+        navigate('/dashboard/');
       })
       .catch((err) => {
         alert('Erro interno!');
       });
   }
-  useEffect(() => {
-    fetchData2();
-  }, []);
+
   return (
     <DashboardLayout>
       <div className="flex flex-col pl-80 pt-16">
-        <div className={`${!hidden ? 'hidden' : 'visible'} pt-6`}>
-          <h1 className="font-bold text-3xl pb-6 pt-6">Empresas Cadastradas</h1>
-          <div className="flex flex-col text-white w-[90%]">
-            <div className="bg-blue-500 rounded">
-              <div className='flex flex-col text-3xl font-bold p-1"'>
-                <table className="border-collapse border border-slate-400 text-2xl">
-                  <thead>
-                    <tr>
-                      <th className="border border-slate-300 ...">#</th>
-                      <th className="border border-slate-300 ...">
-                        Estabelecimento
-                      </th>
-                      <th className="border border-slate-300 ...">Editar</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {estabelecimentos.map((item, key) => (
-                      <tr key={key}>
-                        <td className="text-center border ">{item.id}</td>
-                        <td className="border px-2 hover:bg-blue-800">
-                          {item.nomeFantasia}
-                        </td>
-                        <td className="text-center border">
-                          <button
-                            className="bg-transparent border-none"
-                            onClick={() => edit(item.id)}
-                          >
-                            <PencilIcon className="w-8 fill-yellow-500" />
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className={`${hidden ? 'hidden' : 'visible'} absolute pt-6`}>
-          <h1 className="font-bold text-3xl pb-6">Atualizar empresa</h1>
-          <div className="flex flex-col text-blue-800 font-bold w-[80%]">
+        <h1 className="font-bold text-3xl pb-6">Cadastrar empresa</h1>
+        <div className="flex flex-col text-blue-800 font-bold w-[80%]">
+          <form className="space-y-6" onSubmit={submit}>
             <div className="">
               <label>
                 Razão Social:
                 <input
                   type="text"
                   id="razaoSocial"
-                  value={data.razaoSocial || ''}
                   required
                   className="rounded-md px-3 w-full py-1 border border-gray-300 placeholder-gray-500 text-gray-900"
                   placeholder="Razão Social"
@@ -142,7 +83,6 @@ const Estabelecimento = () => {
                 <input
                   type="text"
                   id="nomeFantasia"
-                  value={data.nomeFantasia || ''}
                   required
                   className="rounded-md px-3 w-full py-1 border border-gray-300 placeholder-gray-500 text-gray-900 "
                   placeholder="Nome Fantasia"
@@ -155,7 +95,6 @@ const Estabelecimento = () => {
                   <input
                     type="text"
                     id="cnpj"
-                    value={data.cnpj || ''}
                     required
                     className="rounded-md px-3 w-full py-1 border border-gray-300 placeholder-gray-500 text-gray-900 "
                     placeholder="CNPJ"
@@ -167,7 +106,6 @@ const Estabelecimento = () => {
                   <input
                     type="text"
                     id="inscricaoEstadual"
-                    value={data.inscricaoEstadual || ''}
                     required
                     className="rounded-md px-3 w-full py-1 border border-gray-300 placeholder-gray-500 text-gray-900 "
                     placeholder="Inscrição Estadual"
@@ -179,7 +117,6 @@ const Estabelecimento = () => {
                   <input
                     type="text"
                     id="cnae"
-                    value={data.cnae || ''}
                     required
                     className="rounded-md px-3 w-full py-1 border border-gray-300 placeholder-gray-500 text-gray-900 "
                     placeholder="CNAE"
@@ -193,7 +130,6 @@ const Estabelecimento = () => {
                   <input
                     type="tel"
                     id="telefone"
-                    value={data.telefone || ''}
                     required
                     className="rounded-md px-3 w-full py-1 border border-gray-300 placeholder-gray-500 text-gray-900 "
                     placeholder="Telefone"
@@ -205,7 +141,6 @@ const Estabelecimento = () => {
                   <input
                     type="email"
                     id="email"
-                    value={data.email || ''}
                     required
                     className="rounded-md px-3 w-full py-1 border border-gray-300 placeholder-gray-500 text-gray-900 "
                     placeholder="Email"
@@ -219,7 +154,6 @@ const Estabelecimento = () => {
                   <input
                     type="text"
                     id="rua"
-                    value={data.rua || ''}
                     required
                     className="rounded-md px-3 w-full py-1 border border-gray-300 placeholder-gray-500 text-gray-900 "
                     placeholder="Rua"
@@ -231,7 +165,6 @@ const Estabelecimento = () => {
                   <input
                     type="text"
                     id="bairro"
-                    value={data.bairro || ''}
                     required
                     className="rounded-md px-3 w-full py-1 border border-gray-300 placeholder-gray-500 text-gray-900 "
                     placeholder="Bairro"
@@ -243,7 +176,6 @@ const Estabelecimento = () => {
                   <input
                     type="text"
                     id="cidade"
-                    value={data.cidade || ''}
                     required
                     className="rounded-md px-3 w-full py-1 border border-gray-300 placeholder-gray-500 text-gray-900 "
                     placeholder="Cidade"
@@ -255,7 +187,6 @@ const Estabelecimento = () => {
                   <select
                     name="uf"
                     id="uf"
-                    value={data.uf || ''}
                     className="rounded-md px-3 w-full py-1 border border-gray-300 placeholder-gray-500 font-bold text-blue-800"
                     onChange={(e) => handle(e)}
                   >
@@ -349,7 +280,6 @@ const Estabelecimento = () => {
                 <input
                   type="text"
                   id="alvaraLocalizacao"
-                  value={data.alvaraLocalizacao || ''}
                   required
                   className="rounded-md px-3 w-full py-1 border border-gray-300 placeholder-gray-500 text-gray-900 "
                   placeholder="Alvara Localização"
@@ -361,7 +291,6 @@ const Estabelecimento = () => {
                 <input
                   type="text"
                   id="alvaraSanitario"
-                  value={data.alvaraSanitario || ''}
                   required
                   className="rounded-md px-3 w-full py-1 border border-gray-300 placeholder-gray-500 text-gray-900 "
                   placeholder="Alvara Sanitário"
@@ -373,7 +302,6 @@ const Estabelecimento = () => {
                 <input
                   type="number"
                   id="funcionarios"
-                  value={data.funcionarios || ''}
                   required
                   className="rounded-md px-3 w-full py-1 border border-gray-300 placeholder-gray-500 text-gray-900 "
                   placeholder="Numero de Funcionarios"
@@ -385,7 +313,6 @@ const Estabelecimento = () => {
                 <input
                   type="text"
                   id="cpfResponsavel"
-                  value={data.cpfResponsavel || ''}
                   required
                   className="rounded-md px-3 w-full py-1 border border-gray-300 placeholder-gray-500 text-gray-900 "
                   placeholder="CPF do responsável"
@@ -398,31 +325,19 @@ const Estabelecimento = () => {
                 <button
                   type="submit"
                   className="bg-green-500 py-2 px-6 my-2 border-green-500 hover:bg-green-900"
-                  onClick={(e) => update(e)}
+                  onSubmit={(e) => submit(e)}
                 >
-                  Atualizar
+                  Cadastrar
                 </button>
                 <button
-                  type="button"
                   className="bg-red-500 py-2 px-6 mx-2 my-2 border-red-500 hover:bg-red-900"
-                  onClick={() => setHidden(true)}
+                  onClick={() => navigate('/dashboard')}
                 >
                   Voltar
                 </button>
               </div>
             </div>
-          </div>
-        </div>
-        <div
-          className={`${
-            !hidden ? 'hidden' : 'visible'
-          } flex justify-end items-end bottom-0 right-0 absolute px-16 py-16`}
-        >
-          <Link to="/dashboard/addestabelecimento">
-            <button className="rounded-full h-20 w-20">
-              <PlusIcon />
-            </button>
-          </Link>
+          </form>
         </div>
       </div>
     </DashboardLayout>
